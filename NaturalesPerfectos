@@ -1,0 +1,52 @@
+#include <iostream>
+#include <string.h>
+#include <array>
+
+using namespace std;
+
+class ArregloNNP{
+public:
+    int *Arreglo;
+    
+    ArregloNNP(int n){
+        Arreglo = new int[n];
+
+        for (int i=0; i<n; i++) {
+            Arreglo[i]=i;
+        }
+    }
+    
+    bool checarNNP(ArregloNNP A,int c){
+        int i=1, r=0;
+        
+        while(i<Arreglo[c]){
+            if(Arreglo[c]%i==0)
+                r=r+i;
+            i++;
+        }
+        if(r==Arreglo[c])
+            return true;
+        else
+            return false;
+    }
+    
+};
+
+
+int main()
+{
+    int c=0,n;
+    cout<<"Dame el tamaño del arreglo:";cin>>n;
+    ArregloNNP a(n);
+    
+    for (int i=0; i<n; i++)
+    {
+        if (a.checarNNP(a, c)==true)
+            cout<<"Es un número natural perfecto"<<endl;
+        else
+            cout<<"No es un número natural perfecto"<<endl;
+        c++;
+    }
+    
+    
+}
