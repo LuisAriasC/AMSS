@@ -1,0 +1,142 @@
+#include <iostream>
+#include <string.h>
+#include <vector>
+
+using namespace std;
+
+class Videojuego{
+public:
+    virtual void concepcion(){
+        cout<<"Etapa de concepción"<<endl;
+    }
+    virtual void diseño(){
+        cout<<"Etapa de diseño"<<endl;
+    }
+    virtual void planificacion(){
+        cout<<"Etapa de planificación"<<endl;
+    }
+    virtual void produccion(){
+        cout<<"Etapa de producción"<<endl;
+        }
+    virtual void pruebasAceptacion(){
+        cout<<"Etapa de pruebas de aceptación"<<endl;
+    }
+    
+    virtual Videojuego* clonar()=0;
+};
+
+
+
+template <class SubClase>
+class ClonVideojuego : public Videojuego
+{
+public:
+    virtual Videojuego* clonar()
+    {
+        return new SubClase(dynamic_cast<SubClase&>(*this));
+    }
+};
+
+
+
+
+class Estrategia : public ClonVideojuego<Estrategia>
+{
+public:
+    string nombre,noserie,tipo,developer;
+    int precio;
+};
+
+
+
+
+class Aventura : public ClonVideojuego<Aventura>
+{
+public:
+    string nombre,noserie,tipo,developer;
+    int precio;
+};
+
+
+
+class Aprendizaje : public ClonVideojuego<Aprendizaje>
+{
+public:
+    string nombre,noserie,tipo,developer;
+    int precio;
+};
+
+class FactoryVideojuegos
+{
+public:
+    template<class T>
+    static T* ordenarVideojuegos(string n, string no, string t, string d, int p)
+    {
+        T* nVid = new T;
+        nVid->nombre=n;
+        nVid->noserie=no;
+        nVid->tipo=t;
+        nVid->developer=d;
+        nVid->precio=p;
+        
+        return nVid;
+    }
+};
+
+
+template <class T>
+class Inventario : public Videojuego {
+public:
+    vector<Videojuego*>* inventario;
+    
+    void crearInventario(){
+        inventario = new vector<Videojuego*>;
+    
+    }
+    
+    
+    void agregarVideojuego(Videojuego* vi){
+        inventario->push_back(vi);
+    
+    }
+    
+    void eliminarVideojuego(Videojuego* vi){
+        
+    
+    }
+    
+    
+    void ordenar(){
+    
+    }
+    
+    
+    void buscar(){
+    
+    }
+    
+    void contabilizar(){
+    
+    }
+    
+    
+    void imprimir(){
+    
+    }
+};
+
+
+int main()
+{
+    Videojuego* es1 = FactoryVideojuegos::ordenarVideojuegos<Estrategia>("Halo","125","Guerra","Bungie",700);
+    
+    Videojuego* es2 = es1->clonar();
+    
+    Inventario<Estrategia >* ies = new Inventario<Estrategia>
+    ies->crearInventario();
+    ies->agregarVideojuego(es1);
+    
+    
+    
+    return 0;
+}
