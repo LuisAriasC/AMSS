@@ -1,31 +1,38 @@
 #include <iostream>
 #include <string.h>
 #include <vector>
-
 using namespace std;
 
-class Videojuego{
+class Videojuego
+{
 public:
-    virtual void concepcion(){
-        cout<<"Etapa de concepción"<<endl;
-    }
-    virtual void diseño(){
-        cout<<"Etapa de diseño"<<endl;
-    }
-    virtual void planificacion(){
-        cout<<"Etapa de planificación"<<endl;
-    }
-    virtual void produccion(){
-        cout<<"Etapa de producción"<<endl;
-        }
-    virtual void pruebasAceptacion(){
-        cout<<"Etapa de pruebas de aceptación"<<endl;
-    }
     
-    virtual Videojuego* clonar()=0;
-};
-
-
+    string name,developer,console;
+    int nserie,price;
+    
+    virtual Videojuego* clonar() = 0;
+    
+    virtual void concepcion()
+    {
+        cout<< "Etapa de Concepto" << endl;
+    }
+    virtual void diseno()
+    {
+        cout<< "Etapa de diseño en curso" << endl;
+    }
+    virtual void planificacion()
+    {
+        cout<< "Etapa de planificacion en curso" << endl;
+    }
+    virtual void produccion()
+    {
+        cout<< "Etapa de produccion en curso" << endl;
+    }
+    virtual void pruebasDeAceptacion()
+    {
+        cout<< "Pruebas de aceptacion en curso" << endl;
+    }
+};//Clase principal de videojuego
 
 template <class SubClase>
 class ClonVideojuego : public Videojuego
@@ -35,106 +42,168 @@ public:
     {
         return new SubClase(dynamic_cast<SubClase&>(*this));
     }
-};
-
-
+};//Template Subclases
 
 
 class Estrategia : public ClonVideojuego<Estrategia>
 {
-public:
-    string nombre,noserie,tipo,developer;
-    int precio;
+private:
 };
-
-
-
 
 class Aventura : public ClonVideojuego<Aventura>
 {
-public:
-    string nombre,noserie,tipo,developer;
-    int precio;
+private:
 };
-
-
 
 class Aprendizaje : public ClonVideojuego<Aprendizaje>
 {
-public:
-    string nombre,noserie,tipo,developer;
-    int precio;
+private:
 };
 
-class FactoryVideojuegos
+
+class VideogameFactory
 {
 public:
     template<class T>
-    static T* ordenarVideojuegos(string n, string no, string t, string d, int p)
+    static T* construirVideojuego(string n, string d,string c, int ns, int p)
     {
-        T* nVid = new T;
-        nVid->nombre=n;
-        nVid->noserie=no;
-        nVid->tipo=t;
-        nVid->developer=d;
-        nVid->precio=p;
-        
-        return nVid;
+        T* vg = new T;
+        vg->name = n;
+        vg->developer = d;
+        vg->console = c;
+        vg->nserie = ns;
+        vg->price = p;
+        vg->concepcion();
+        vg->diseno();
+        vg->planificacion();
+        vg->produccion();
+        vg->pruebasDeAceptacion();
+        return vg;
     }
 };
-
 
 template <class T>
-class Inventario : public Videojuego {
+class Inventario {
+    
 public:
-    vector<Videojuego*>* inventario;
+    vector<Videojuego* >* inventario;
     
-    void crearInventario(){
-        inventario = new vector<Videojuego*>;
-    
+    void crearInventario()
+    {
+        inventario = new vector<Videojuego*>();
     }
     
     
-    void agregarVideojuego(Videojuego* vi){
-        inventario->push_back(vi);
-    
+    void agregar(Videojuego* v)
+    {
+        inventario->push_back(v);
+        cout << v->name << " agregado a inventario" << endl;
     }
     
-    void eliminarVideojuego(Videojuego* vi){
+    void eliminar(Videojuego* v)
+    {
+        int pos = 0;
+        for (int i=0; i<inventario->size(); i++)
+        {
+            if (inventario->at(i) == v) {
+                pos = 1;
+                break;
+            }
+        }
         
-    
+        inventario->erase(inventario->begin() + pos);
+        
+        cout << v->name << " eliminado del inventario" << endl;
     }
     
     
-    void ordenar(){
-    
+    void ordenar()
+    {
+        int i,j,aux;
+        for (i=0; i<inventario->size()-1; i++)
+        {
+                for(j=0;j<inventario->size()-1;j++)
+                {
+                    if(at[j]->nserie> at[j+1]->nserie)
+                    { 
+                        aux=at[j];
+                        at[j]=at[j+1];
+                        at[j+1]=aux;
+                    } 
+                }
+        }
     }
     
-    
-    void buscar(){
-    
+    Videojuego* buscar(string n)
+    {
+        int i;
+        //Buscar la posicion del videojuego
+        for (i=0; i<inventario->size(); i++)
+        {
+            if (inventario->at(i)->name == n) {
+                break;
+                
+            }
+        }
+        return inventario->at(i);
     }
     
-    void contabilizar(){
-    
+    Videojuego* buscar(int ns)
+    {
+        int i;
+        //Buscar la posicion del videojuego
+        for (i=0; i<inventario->size(); i++)
+        {
+            if (inventario->at(i)->nserie == ns) {
+                break;
+                
+            }
+        }
+        return inventario->at(i);
     }
     
-    
-    void imprimir(){
-    
+    void imprimir()
+    {
+        for (int i=0; i<inventario->size(); i++)
+        {
+            cout << inventario->at(i)->name << endl;
+        }
     }
+    
+    void totalElementos()
+    {
+        cout << "Videojuegos en inventario: " << inventario->size() << endl;
+    }
+    
 };
 
 
-int main()
-{
-    Videojuego* es1 = FactoryVideojuegos::ordenarVideojuegos<Estrategia>("Halo","125","Guerra","Bungie",700);
+
+int main() {
     
-    Videojuego* es2 = es1->clonar();
     
-    Inventario<Estrategia >* ies = new Inventario<Estrategia>
-    ies->crearInventario();
-    ies->agregarVideojuego(es1);
+    //Estrategia
+    Videojuego* hw = VideogameFactory::construirVideojuego<Estrategia>("Halo Wars","Bungie","Xbox",6546,500);
+    Videojuego* xc = VideogameFactory::construirVideojuego<Estrategia>("Xcom","2k Games","PlayStation 4",3634,350);
+    Videojuego* aoe = VideogameFactory::construirVideojuego<Estrategia>("Age of Empires","Microsoft","  PC",7634,299);
+    Videojuego* hw2 = hw->clonar();
+    Videojuego* xc2 = xc->clonar();
+    Videojuego* aoe2= aoe->clonar();
+    
+    Inventario<Estrategia>* invest = new Inventario<Estrategia>;
+    invest->crearInventario();
+    invest->agregar(hw);
+    invest->agregar(xc);
+    invest->agregar(aoe);
+    invest->agregar(hw2);
+    invest->agregar(xc2);
+    invest->agregar(aoe2);
+    invest->eliminar(hw2);
+    invest->eliminar(xc);
+    cout<< "Videojuego:" << invest->buscar(6546)<<endl;
+    cout<< "Videojuego:" << invest->buscar("Xcom")<<endl;
+    invest->imprimir();
+    invest->totalElementos();
     
     
     
