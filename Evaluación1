@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string.h>
 #include <vector>
+#include <algorithm>
+
 using namespace std;
 
 class Videojuego
@@ -87,10 +89,12 @@ class Inventario {
     
 public:
     vector<Videojuego* >* inventario;
+    vector<Videojuego* >* regreso;
     
     void crearInventario()
     {
         inventario = new vector<Videojuego*>();
+        regreso = new vector<Videojuego*>();
     }
     
     
@@ -111,30 +115,29 @@ public:
             }
         }
         
+        regreso->push_back(inventario->at(pos));
         inventario->erase(inventario->begin() + pos);
         
         cout << v->name << " eliminado del inventario" << endl;
     }
     
     
-    void ordenar()
+    void rehacer()
     {
-        int i,j,aux;
-        for (i=0; i<inventario->size()-1; i++)
+        
+        if (regreso->size() > 0)
         {
-                for(j=0;j<inventario->size()-1;j++)
-                {
-                    if(at[j]->nserie> at[j+1]->nserie)
-                    { 
-                        aux=at[j];
-                        at[j]=at[j+1];
-                        at[j+1]=aux;
-                    } 
-                }
+            
+            inventario->push_back(regreso->back());
+            regreso->pop_back();
+            
+            cout << "Se deshizo la operación de eliminado videojuego: " << endl;
+            
         }
+        
     }
     
-    Videojuego* buscar(string n)
+    string buscar(string n)
     {
         int i;
         //Buscar la posicion del videojuego
@@ -145,10 +148,10 @@ public:
                 
             }
         }
-        return inventario->at(i);
+        return inventario->at(i)->name;
     }
     
-    Videojuego* buscar(int ns)
+    string buscar(int ns)
     {
         int i;
         //Buscar la posicion del videojuego
@@ -159,8 +162,27 @@ public:
                 
             }
         }
-        return inventario->at(i);
+        return inventario->at(i)->name;
     }
+    
+    
+    void ordenMeMa()
+    {
+        
+        sort( inventario->begin(), inventario->end( ), [ ](Videojuego* a, Videojuego* b )
+             {
+                 return a->price < b->price;
+             });
+    }
+    
+    void ordenMaMe()
+    {
+        sort( inventario->begin(), inventario->end( ), [ ](Videojuego* a, Videojuego* b )
+             {
+                 return a->price > b->price;
+             });
+    }
+    
     
     void imprimir()
     {
@@ -203,8 +225,17 @@ int main() {
     cout<< "Videojuego:" << invest->buscar(6546)<<endl;
     cout<< "Videojuego:" << invest->buscar("Xcom")<<endl;
     invest->imprimir();
+    cout << endl;
     invest->totalElementos();
-    
+    cout << endl;
+    invest -> rehacer();
+    invest -> imprimir();
+    cout << endl;
+    invest -> ordenMaMe();
+    invest -> imprimir();
+    cout << endl;
+    invest -> ordenMeMa();
+    invest -> imprimir();
     
     
     return 0;
