@@ -38,37 +38,74 @@ public:
 };
 int Double::countDouble=0;
 
-
+/******************************************* VISITOR **************************************************/
 
 template <class T>
 class Visitor{
     
+    /*Visitor(){
+        instance = this;
+    }
+    static Visitor* instance;*/
 public:
+    /*static Visitor* getInstance(){
+        if (instance==0) {
+            return new Visitor*;
+        }
+        else
+            return instance;
+    }*/
+    
     virtual void visit(Integer*)=0;
     virtual void visit(Double*)=0;
 };
-
+//template<> Visitor<T>* Visitor<T>::instance=0;
 
 /******************************************** COUNT VISITOR **************************************/
 
 class CountVisitor : public Visitor<class T>
 {
+    CountVisitor(){
+        instance = this;
+    }
+    static CountVisitor* instance;
 public:
+    static CountVisitor* getInstance(){
+        if (instance==0) {
+            return new CountVisitor;
+        }
+        else
+            return instance;
+    }
+    
     void visit(Integer* i)
     {
-        cout << Integer::countInts;
+        cout << Integer::countInts << endl;
     }
     void visit(Double* d)
     {
-        cout << Double::countDouble;
+        cout << Double::countDouble << endl;
     }
 };
+CountVisitor* CountVisitor::instance=0;
 
 
 /******************************************** ADD VISITOR **************************************/
 class AddVisitor : public Visitor<class T>
 {
+    AddVisitor(){
+        instance = this;
+    }
+    static AddVisitor* instance;
 public:
+    static AddVisitor* getInstance(){
+        if (instance==0) {
+            return new AddVisitor;
+        }
+        else
+            return instance;
+    }
+    
     void visit(Integer* i)
     {
         Integer::countInts++;
@@ -78,6 +115,7 @@ public:
         Double::countDouble++;
     }
 };
+AddVisitor* AddVisitor::instance=0;
 
 
 /***************************** PRESENT VISITOR *************************************************/
@@ -99,11 +137,11 @@ public:
     
     void visit(Integer *i)
     {
-        cout << i->getQuienSoy();
+        cout << i->getQuienSoy() << " ";
     }
     void visit(Double *d)
     {
-        cout << d->getQuienSoy();
+        cout << d->getQuienSoy() << " ";
     }
 };
 PresentVisitor* PresentVisitor::instance=0;
@@ -124,26 +162,28 @@ void Integer::accept(Visitor<T>* v)
 
 int main (){
     
-    AddVisitor a;
-    CountVisitor c;
+    AddVisitor* a = AddVisitor::getInstance();
+    CountVisitor* c = CountVisitor::getInstance();
     PresentVisitor* p = PresentVisitor::getInstance();
     
     Number<T>::Number* n[] = {new Integer, new Double};
     
     for (int i=0; i < 5; i++){
         for (int j=0; j<2; j++) {
-            n[j]->accept(&a);
+            //n[j]->accept(&a);
+            n[j]->accept(a);
         }
     }
     
     n[0]->accept(p);
-    n[0]->accept(&c);
+    //n[0]->accept(&c);
+    n[0]->accept(c);
     
     cout << endl;
     
     n[1]->accept(p);
-    n[1]->accept(&c);
-    
+    //n[1]->accept(&c);
+    n[1]->accept(c);
     
     return 0;
 }
