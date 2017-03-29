@@ -1,0 +1,217 @@
+#include <iostream>
+
+using namespace std;
+
+
+class Printers;
+
+/************************************** DOCUMENTS *************************************************/
+
+class Documents {
+protected:
+    string tipodoc;
+    
+public:
+    string tipoDoc(){return tipodoc;}
+    virtual void printOn(Printers*)=0;
+};
+
+class SimpleText : public Documents
+{
+public:
+    SimpleText(){
+        tipodoc = "Simple text document";
+    }
+    static int countSimple;
+    void printOn(Printers*);
+};
+int SimpleText::countSimple=0;
+
+
+
+class FormatText : public Documents
+{
+public:
+    FormatText(){
+        tipodoc = "Format text document";
+    }
+    static int countFormat;
+    void printOn(Printers*);
+};
+int FormatText::countFormat=0;
+
+
+class Image : public Documents
+{
+public:
+    Image(){
+        tipodoc = "Image document";
+    }
+    static int countImage;
+    void printOn(Printers*);
+};
+int Image::countImage=0;
+
+/******************************************* PRINTERS ***********************************************/
+
+class Printers
+{
+public:
+    virtual void print(SimpleText*)=0;
+    virtual void print(FormatText*)=0;
+    virtual void print(Image*)=0;
+    
+    
+    
+};
+
+
+class Laser : public Printers
+{
+public:
+    
+    
+    void print(SimpleText *d)
+    {
+        cout << d->tipoDoc() << " printing on Laser printer" << endl;
+    }
+    void visit(FormatText *d)
+    {
+        cout << d->tipoDoc() << " printing on Laser printer" << endl;
+    }
+    void visit(Image *d)
+    {
+        cout << d->tipoDoc() << " printing on Laser printer" << endl;
+    }
+};
+
+
+class Injection : public Printers
+{
+public:
+    
+    
+    void print(SimpleText *d)
+    {
+        cout << d->tipoDoc() << " printing on Injection printer" << endl;
+    }
+    void visit(FormatText *d)
+    {
+        cout << d->tipoDoc() << " printing on Injection printer" << endl;
+    }
+    void visit(Image *d)
+    {
+        cout << d->tipoDoc() << " printing on Injection printer" << endl;
+    }
+};
+
+
+class PDF : public Printers
+{
+public:
+    
+    
+    void print(SimpleText *d)
+    {
+        cout << d->tipoDoc() << " printing on PDF printer" << endl;
+    }
+    void visit(FormatText *d)
+    {
+        cout << d->tipoDoc() << " printing on PDF printer" << endl;
+    }
+    void visit(Image *d)
+    {
+        cout << d->tipoDoc() << " printing on PDF printer" << endl;
+    }
+};
+
+
+class Postcript : public Printers
+{
+public:
+    
+    
+    void print(SimpleText *d)
+    {
+        cout << d->tipoDoc() << " printing on Postcript printer" << endl;
+    }
+    void visit(FormatText *d)
+    {
+        cout << d->tipoDoc() << " printing on Postcrips printer" << endl;
+    }
+    void visit(Image *d)
+    {
+        cout << d->tipoDoc() << " printing on Postcript printer" << endl;
+    }
+};
+
+
+class AddDoc : public Printers
+{
+public:
+    void print(SimpleText*)
+    {
+        SimpleText::countSimple++;
+    }
+    void print(FormatText*)
+    {
+        FormatText::countFormat++;
+    }
+    void print(Image*)
+    {
+        Image::countImage++;
+    }
+};
+
+/***************************************** PRINT ON ***************************************************/
+void SimpleText::printOn(Printers* p)
+{
+    p->print(this);
+}
+
+void FormatText::printOn(Printers* p)
+{
+    p->print(this);
+}
+
+void Image::printOn(Printers* p)
+{
+    p->print(this);
+}
+
+/******************************************* CLASE MAIN ***********************************************/
+
+class Main
+{
+public:
+    void printAllDocuments(Documents** d,int countDocs,Printers** p, int countPrinters)
+    {
+        for (int i = 0; i < countDocs; i++) {
+            for (int j = 0; i < countPrinters; i++) {
+                d[i]->printOn(p[j]);
+            }
+        }
+    }
+};
+
+
+int main(){
+    
+    Main m;
+    AddDoc a;
+    //Laser *l[10];
+    Laser *l;
+    Documents* d[] = {new SimpleText,new FormatText, new Image};
+    
+    for (int i=0; i < 5; i++){
+        for (int j=0; j<3; j++) {
+            d[j]->printOn(&a);
+        }
+    }
+    
+    d[0]->printOn(l);
+    
+    //m.printAllDocuments(*d,5,l,10);
+    
+    return 0;
+}
